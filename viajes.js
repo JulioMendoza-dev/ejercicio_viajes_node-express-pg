@@ -12,4 +12,4 @@ const agregarViaje = async (destino, presupuesto) => {
  console.log("Viaje agregado")
 }
 // Exportar las funciones para usarlas en otros archivos
-module.exports = {  agregarViaje };
+module.exports = agregarViaje ;

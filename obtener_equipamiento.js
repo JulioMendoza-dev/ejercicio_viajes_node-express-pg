@@ -6,6 +6,5 @@ const obtener_equipamiento = async () => {
   const result = await pool.query(consulta);
   return result.rows;
 };
-obtener_equipamiento();
 
-module.exports = { obtener_equipamiento };
+module.exports = obtener_equipamiento ;

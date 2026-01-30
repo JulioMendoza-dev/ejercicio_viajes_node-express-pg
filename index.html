@@ -6,9 +6,17 @@
     <title>API de viajes y equipamiento</title>
   </head>
 
-  <body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
-    <h1>api de viajes y equipamiento</h1>
-    <section style="padding: 3%; margin: 5%;">
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      
+    "
+  >
+    <h1 style="text-align: center;">api de viajes y equipamiento</h1>
+    <section style="padding: 3%; margin: 5%">
       <form action="">
         <h3>Formulario de Viajes</h3>
         <input type="text" id="destino" placeholder="Destino" />
@@ -20,38 +28,44 @@
         <input type="text" id="equipamiento" placeholder="Equipamiento" />
         <button id="AgregarEquipamiento">Agregar Equipamiento</button>
       </form>
-    </section style="">
-    <div id="contenedor" style="display: flex;">
-      <div id="viajes" 
-    style="width:200px; 
-    height:250px; 
-    border:3px solid rgb(16, 228, 5); 
-    margin:0 auto; 
-    text-align:center;
-    padding: 10px;
-    overflow-y: auto;">
+    </section>
+    <div id="contenedor" style="display: flex">
+      <div
+        id="viajesLista"
+        style="
+          width: 200px;
+          height: 250px;
+          border: 3px solid rgb(16, 228, 5);
+          margin: 0 auto;
+          text-align: center;
+          padding: 10px;
+          overflow-y: auto;
+        "
+      ></div>
+      <div
+        id="equipamientolista"
+        style="
+          width: 200px;
+          height: 250px;
+          border: 3px solid rgb(5, 5, 242);
+          margin: 0 auto;
+          text-align: center;
+          padding: 10px;
+          overflow-y: auto;
+        "
+      ></div>
     </div>
-    <div id="equipamientolista" 
-    style="width:200px; 
-    height:250px; 
-    border:3px solid rgb(5, 5, 242); 
-    margin:0 auto; 
-    text-align:center;
-    padding: 10px;
-    overflow-y: auto;">
-    </div>
-</div>
     <script>
-      const viajesDiv = document.getElementById("viajes");
+      const viajesDiv = document.getElementById("viajesLista");
       const equipamientoDiv = document.getElementById("equipamientolista");
 
       async function fetchViajes() {
-        const res = await fetch("http://localhost:3000/viajes");
+        const res = await fetch("http://localhost:3000/obtener_viajes");
         const viajes = await res.json();
         return viajes;
       }
       async function fetchEquipamiento() {
-        const res = await fetch("http://localhost:3000/equipamiento");
+        const res = await fetch("http://localhost:3000/obtener_equipamiento");
         const equipamiento = await res.json();
         return equipamiento;
       }
@@ -66,11 +80,14 @@
         let equipamientoTemplate = "</ul>";
 
         for (const viaje of viajes) {
-          viajesTemplate += `</ul><p>${viaje.destino} - $${viaje.presupuesto}</p></ul>`;
+          viajesTemplate += `<li>${viaje.destino} - $${viaje.presupuesto}</li>`;
         }
+        viajesTemplate += "<ul>";
         for (const item of equipamiento) {
-          equipamientoTemplate += `</ul></p>${item.nombre}</p></ul>`;
+          equipamientoTemplate += `<li>${item.nombre}</li>`;
         }
+        equipamientoTemplate += "<ul>";
+
         viajesDiv.innerHTML = viajesTemplate;
         equipamientoDiv.innerHTML = equipamientoTemplate;
       }
@@ -82,7 +99,7 @@
         const destinoInput = document.getElementById("destino");
         const presupuestoInput = document.getElementById("presupuesto");
 
-        await fetch("http://localhost:3000/agregarViaje", {
+        await fetch("http://localhost:3000/viajes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -102,7 +119,7 @@
         e.preventDefault();
         const equipamientoInput = document.getElementById("equipamiento");
 
-        await fetch("http://localhost:3000/agregarEquipamiento", {
+        await fetch("http://localhost:3000/equipamiento", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

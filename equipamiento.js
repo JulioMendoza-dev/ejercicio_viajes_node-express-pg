@@ -12,4 +12,4 @@ const agregarEquipamiento = async (nombre) => {
  console.log("Equipamiento agregado", nombre);
 }
 
-module.exports = {  agregarEquipamiento };
+module.exports =   agregarEquipamiento ;

@@ -8,6 +8,6 @@ const obtener_viajes = async () => {
   const result = await pool.query(consulta);
   return result.rows;
 };
-obtener_viajes();
 
-module.exports = { obtener_viajes };
+
+module.exports =  obtener_viajes ;
