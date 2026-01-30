@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API de viajes y equipamiento</title>
+  </head>
+
+  <body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+    <h1>api de viajes y equipamiento</h1>
+    <section style="padding: 3%; margin: 5%;">
+      <form action="">
+        <h3>Formulario de Viajes</h3>
+        <input type="text" id="destino" placeholder="Destino" />
+        <input type="number" id="presupuesto" placeholder="Presupuesto" />
+        <button id="AgregarViaje">Agregar Viaje</button>
+      </form>
+      <form action="">
+        <h3>Formulario de Equipamiento</h3>
+        <input type="text" id="equipamiento" placeholder="Equipamiento" />
+        <button id="AgregarEquipamiento">Agregar Equipamiento</button>
+      </form>
+    </section style="">
+    <div id="contenedor" style="display: flex;">
+      <div id="viajes" 
+    style="width:200px; 
+    height:250px; 
+    border:3px solid rgb(16, 228, 5); 
+    margin:0 auto; 
+    text-align:center;
+    padding: 10px;
+    overflow-y: auto;">
+    </div>
+    <div id="equipamientolista" 
+    style="width:200px; 
+    height:250px; 
+    border:3px solid rgb(5, 5, 242); 
+    margin:0 auto; 
+    text-align:center;
+    padding: 10px;
+    overflow-y: auto;">
+    </div>
+</div>
+    <script>
+      const viajesDiv = document.getElementById("viajes");
+      const equipamientoDiv = document.getElementById("equipamientolista");
+
+      async function fetchViajes() {
+        const res = await fetch("http://localhost:3000/viajes");
+        const viajes = await res.json();
+        return viajes;
+      }
+      async function fetchEquipamiento() {
+        const res = await fetch("http://localhost:3000/equipamiento");
+        const equipamiento = await res.json();
+        return equipamiento;
+      }
+      //Es una función asíncrona (async) porque usa await.
+      //Llama a dos funciones que seguramente hacen peticiones al backend o a la base de datos:
+      //fetchViajes() → obtiene un array de viajes. fetchEquipamiento() → obtiene un array de equipamiento.
+      async function render() {
+        const viajes = await fetchViajes();
+        const equipamiento = await fetchEquipamiento();
+
+        let viajesTemplate = "</ul>";
+        let equipamientoTemplate = "</ul>";
+
+        for (const viaje of viajes) {
+          viajesTemplate += `</ul><p>${viaje.destino} - $${viaje.presupuesto}</p></ul>`;
+        }
+        for (const item of equipamiento) {
+          equipamientoTemplate += `</ul></p>${item.nombre}</p></ul>`;
+        }
+        viajesDiv.innerHTML = viajesTemplate;
+        equipamientoDiv.innerHTML = equipamientoTemplate;
+      }
+      render();
+      // logica de los formularios de viajes para enviar datos al backend
+      const agregarViajeBtn = document.getElementById("AgregarViaje");
+      agregarViajeBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const destinoInput = document.getElementById("destino");
+        const presupuestoInput = document.getElementById("presupuesto");
+
+        await fetch("http://localhost:3000/agregarViaje", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            destino: destinoInput.value,
+            presupuesto: presupuestoInput.value,
+          }),
+        });
+        destinoInput.value = "";
+        presupuestoInput.value = "";
+        render();
+      });
+      // logica del formulario de equipamiento para enviar datos al backend
+      const agregarEquipamientoBtn = document.getElementById(
+        "AgregarEquipamiento",
+      );
+      agregarEquipamientoBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const equipamientoInput = document.getElementById("equipamiento");
+
+        await fetch("http://localhost:3000/agregarEquipamiento", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombre: equipamientoInput.value,
+          }),
+        });
+        equipamientoInput.value = "";
+        render();
+      });
+    </script>
+  </body>
+</html>
