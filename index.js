@@ -1,12 +1,14 @@
 const express = require("express");
 const cors = require("cors");
-const pool = require("./database/db");
-const agregarViaje = require("./viajes");
-const agregarEquipamiento = require("./equipamiento");
-const obtener_viajes = require("./obtener_viajes");
-const obtener_equipamiento = require("./obtener_equipamiento");
+const agregarViaje = require("./agregarViajes");
+const agregarEquipamiento = require("./agregarEquipamiento");
+const obtenerViajes = require("./obtenerViajes");
+const obtenerEquipamiento = require("./obtenerEquipamiento");
 const modificarPresupuesto = require("./modificarPresupuesto");
 const modificarEquipamiento = require("./modificarEquipamiento");
+const eliminarViaje = require("./eliminarViaje");
+const eliminarEquipamiento =  require("./eliminarEquipamiento");
+
 
 const app = express();
 const PORT = 3000;
@@ -19,13 +21,13 @@ app.listen(PORT, () => {
   console.log("puerto 3000 corriendo en http://localhost:3000");
 });
 // GET: obtener viajes
-app.get("/obtener_viajes", async (req, res) => {
-  const viajes = await obtener_viajes();
+app.get("/obtenerViajes", async (req, res) => {
+  const viajes = await obtenerViajes();
   res.json(viajes);
 });
 // GET: obtener equipamiento
-app.get("/obtener_equipamiento", async (req, res) => {
-  const equipamiento = await obtener_equipamiento();
+app.get("/obtenerEquipamiento", async (req, res) => {
+  const equipamiento = await obtenerEquipamiento();
   res.json(equipamiento);
 });
 // POST: agregar viaje
@@ -34,7 +36,6 @@ app.post("/agregarViajes", async (req, res) => {
   await agregarViaje(viaje.destino, viaje.presupuesto);
   res.json({ mensaje: "Viaje agregado correctamente" });
 });
-
 // POST: agregar equipamiento
 app.post("/agregarEquipamiento", async (req, res) => {
   const equipamiento = req.body;
@@ -52,7 +53,7 @@ app.put("/modificarPresupuesto/:id", async (req, res) => {
     res.send(error);
   }
 });
-//modificar equipamiento
+//put: modificar equipamiento
 app.put("/modificarEquipamiento/:id", async (req, res) => {
   const { id } = req.params;
   const { nombre } = req.body;
@@ -63,16 +64,15 @@ app.put("/modificarEquipamiento/:id", async (req, res) => {
     res.send(error);
   }
 });
-
 // delete: eliminar viaje
 app.delete("/eliminarViaje/:id", async (req, res) => {
   const { id } = req.params;
-  await pool.query("DELETE FROM viajes WHERE id = $1", [id]);
+  await eliminarViaje(id);
   res.json({ mensaje: "Viaje eliminado correctamente" });
 });
 // delete: eliminar equipamiento
 app.delete("/eliminarEquipamiento/:id", async (req, res) => {
   const { id } = req.params;
-  await pool.query("DELETE FROM equipamiento WHERE id = $1", [id]);
+  await eliminarEquipamiento(id);
   res.json({ mensaje: "Equipamiento eliminado correctamente" });
 });

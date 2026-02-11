@@ -9,26 +9,47 @@
   <body
     style="
       font-family: Arial, sans-serif;
-      max-width: 600px;
+      max-width: 100%;
       margin: auto;
       padding: 20px;
     "
   >
     <h1 style="text-align: center">api de viajes y equipamiento</h1>
-    <section style="padding: 3%; margin: 5%">
-      <form action="">
-        <h3>Formulario de Viajes</h3>
-        <input type="text" id="destino" placeholder="Destino" />
-        <input type="number" id="presupuesto" placeholder="Presupuesto" />
-        <button id="AgregarViaje">Agregar Viaje</button>
-      </form>
-      <form action="">
-        <h3>Formulario de Equipamiento</h3>
-        <input type="text" id="equipamiento" placeholder="Equipamiento" />
-        <button id="AgregarEquipamiento">Agregar Equipamiento</button>
-      </form>
-    </section>
-    <div id="contenedor" style="display: flex">
+    <div id="container-section" style="display: flex;  width: 500px;">
+      <section style="padding: 3%; margin: 5%; border: 3px solid black;">
+        <form action="">
+          <h3>Formulario de Viajes</h3>
+          <input type="text" id="destino" placeholder="Destino" />
+          <input type="number" id="presupuesto" placeholder="Presupuesto" />
+          <button id="AgregarViaje">Agregar Viaje</button>
+        </form>
+        <form action="">
+          <h3>Modificar viaje</h3>
+          <input
+            type="text"
+            id="viajeModificar"
+            placeholder="Viaje a modificar"
+          />
+          <input type="text" id="nuevoDestino" placeholder="Nuevo destino" />
+          <input
+            type="number"
+            id="nuevoPresupuesto"
+            placeholder="Nuevo presupuesto"
+          />
+          <button id="ModificarViaje">Modificar viaje</button>
+        </form>
+        <form action="">
+          <h3>Eliminar Viaje</h3>
+          <input
+            type="text"
+            id="viajeEliminar"
+            placeholder="Viaje a eliminar"
+          />
+          <button id="EliminarViaje">Eliminar Viaje</button>
+        </form>
+        
+      </section>
+          <div id="contenedor" style="display: flex">
       <div
         id="viajesLista"
         style="
@@ -41,8 +62,38 @@
           overflow-y: auto;
         "
       ></div>
-      <div
-        id="equipamientolista"
+      <section style="padding: 3%; margin: 5%; border: 3px solid black">
+        <form action="">
+          <h3>Formulario de Equipamiento</h3>
+          <input type="text" id="equipamiento" placeholder="Equipamiento" />
+          <button id="AgregarEquipamiento">Agregar Equipamiento</button>
+        </form>
+        <form action="">
+          <h3>Modificar Equipamiento</h3>
+          <input
+            type="text"
+            id="equipamientoModificar"
+            placeholder="Equipamiento a modificar"
+          />
+          <input
+            type="text"
+            id="nuevoEquipamiento"
+            placeholder="Nuevo nombre del equipamiento"
+          />
+          <button id="ModificarEquipamiento">Modificar Equipamiento</button>
+        </form>
+        <form action="">
+          <h3>Eliminar Equipamiento</h3>
+          <input
+            type="text"
+            id="equipamientoEliminar"
+            placeholder="Equipamiento a eliminar"
+          />
+          <button id="EliminarEquipamiento">Eliminar Equipamiento</button>
+        </form>
+      </section>
+            <div
+        id="equipamientoLista"
         style="
           width: 200px;
           height: 250px;
@@ -53,40 +104,83 @@
           overflow-y: auto;
         "
       ></div>
-    </div>
+
     <script>
       const viajesDiv = document.getElementById("viajesLista");
-      const equipamientoDiv = document.getElementById("equipamientolista");
-
+      const equipamientoDiv = document.getElementById("equipamientoLista");
+      // Funciones para obtener los viajes desde el backend
       async function fetchViajes() {
-        const res = await fetch("http://localhost:3000/obtener_viajes");
+        const res = await fetch("http://localhost:3000/obtenerViajes");
         const viajes = await res.json();
         return viajes;
       }
+      // Función para obtener el equipamiento desde el backend
       async function fetchEquipamiento() {
-        const res = await fetch("http://localhost:3000/obtener_equipamiento");
+        const res = await fetch("http://localhost:3000/obtenerEquipamiento");
         const equipamiento = await res.json();
         return equipamiento;
       }
-      //Es una función asíncrona (async) porque usa await.
-      //Llama a dos funciones que seguramente hacen peticiones al backend o a la base de datos:
+      // Función para modificar equipamiento
+      async function modificarEquipamiento(nombreActual, nuevoNombre) {
+        await fetch("http://localhost:3000/modificarEquipamiento", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nombreActual,
+            nuevoNombre,
+          }),
+        });
+      }
+      // funcion para modificar viajes
+      async function modificarViaje(
+        destinoActual,
+        nuevoDestino,
+        nuevoPresupuesto,
+      ) {
+        await fetch("http://localhost:3000/modificarViaje", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            destinoActual,
+            nuevoDestino,
+            nuevoPresupuesto,
+          }),
+        });
+      }
+      // Función para eliminar equipamiento
+      async function eliminarEquipamiento(nombre) {
+        await fetch("http://localhost:3000/eliminarEquipamiento", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre }),
+        });
+      }
+      // Función para eliminar viaje
+      async function eliminarViaje(destino) {
+        await fetch("http://localhost:3000/eliminarViaje", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ destino }),
+        });
+      }
       //fetchViajes() → obtiene un array de viajes. fetchEquipamiento() → obtiene un array de equipamiento.
       async function render() {
         const viajes = await fetchViajes();
         const equipamiento = await fetchEquipamiento();
-
+        // Luego, se generan las plantillas HTML para mostrar los viajes y el equipamiento en la interfaz.
         let viajesTemplate = "</ul>";
         let equipamientoTemplate = "</ul>";
-
+        // Se itera sobre los arrays de viajes para construir las listas HTML correspondientes.
         for (const viaje of viajes) {
           viajesTemplate += `<li>${viaje.destino} - $${viaje.presupuesto}</li>`;
         }
         viajesTemplate += "<ul>";
+        // Se itera sobre los arrays de equipamiento para construir las listas HTML correspondientes.
         for (const item of equipamiento) {
           equipamientoTemplate += `<li>${item.nombre}</li>`;
         }
         equipamientoTemplate += "<ul>";
-
+        // Finalmente, se actualizan los contenedores en la interfaz con las plantillas generadas.
         viajesDiv.innerHTML = viajesTemplate;
         equipamientoDiv.innerHTML = equipamientoTemplate;
       }
@@ -98,7 +192,7 @@
         const destinoInput = document.getElementById("destino");
         const presupuestoInput = document.getElementById("presupuesto");
 
-        await fetch("http://localhost:3000/viajes", {
+        await fetch("http://localhost:3000/agregarViajes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -118,7 +212,7 @@
         e.preventDefault();
         const equipamientoInput = document.getElementById("equipamiento");
 
-        await fetch("http://localhost:3000/equipamiento", {
+        await fetch("http://localhost:3000/agregarEquipamiento", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -126,6 +220,70 @@
           }),
         });
         equipamientoInput.value = "";
+        render();
+      });
+      // logica del formulario para modificar equipamiento
+      const modificarEquipamientoBtn = document.getElementById(
+        "ModificarEquipamiento",
+      );
+      modificarEquipamientoBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const equipamientoModificarInput = document.getElementById(
+          "equipamientoModificar",
+        );
+        const nuevoEquipamientoInput =
+          document.getElementById("nuevoEquipamiento");
+
+        await modificarEquipamiento(
+          equipamientoModificarInput.value,
+          nuevoEquipamientoInput.value,
+        );
+        equipamientoModificarInput.value = "";
+        nuevoEquipamientoInput.value = "";
+        render();
+      });
+      // logica del formulario para eliminar equipamiento
+      const eliminarEquipamientoBtn = document.getElementById(
+        "EliminarEquipamiento",
+      );
+      eliminarEquipamientoBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const equipamientoEliminarInput = document.getElementById(
+          "equipamientoEliminar",
+        );
+
+        await eliminarEquipamiento(equipamientoEliminarInput.value);
+        equipamientoEliminarInput.value = "";
+        render();
+      });
+      // logica del formulario para modificar viajes
+      const modificarViajeBtn = document.getElementById("ModificarViaje");
+      modificarViajeBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const destinoModificarInput =
+          document.getElementById("destinoModificar");
+        const nuevoDestinoInput = document.getElementById("nuevoDestino");
+        const nuevoPresupuestoInput =
+          document.getElementById("nuevoPresupuesto");
+
+        await modificarViaje(
+          destinoModificarInput.value,
+          nuevoDestinoInput.value,
+          nuevoPresupuestoInput.value,
+        );
+        destinoModificarInput.value = "";
+        nuevoDestinoInput.value = "";
+        nuevoPresupuestoInput.value = "";
+        render();
+      });
+      // logica del formulario para eliminar viajes
+      const eliminarViajeBtn = document.getElementById("EliminarViaje");
+      eliminarViajeBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const viajeEliminarInput = document.getElementById("viajeEliminar");
+
+        await eliminarViaje(viajeEliminarInput.value);
+        viajeEliminarInput.value = "";
         render();
       });
     </script>
